@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         התאמת מחירים אוטומטית של טמו
 // @namespace    http://tampermonkey.net/
-// @version      3.1
+// @version      3.2
 // @description  אוטומציה להתאמת מחיר בטמו - עיצוב בולט יותר וזמן השהייה עם ספירה לאחור לפני סגירה
 // @author       You
 // @match        https://www.temu.com/bgt_order_detail.html*
@@ -9,6 +9,8 @@
 // @match        https://www.temu.com/bgas_refund_detail.html*
 // @grant        window.close
 // @run-at       document-idle
+// @updateURL    https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/temu-price-matcher.user.js
+// @downloadURL  https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/temu-price-matcher.user.js
 // ==/UserScript==
 
 (function() {
