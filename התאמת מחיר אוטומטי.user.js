@@ -9,8 +9,8 @@
 // @match        https://www.temu.com/bgas_refund_detail.html*
 // @grant        window.close
 // @run-at       document-idle
-// @updateURL    https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/temu-price-matcher.user.js
-// @downloadURL  https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/temu-price-matcher.user.js
+// @updateURL    https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/התאמת מחיר אוטומטי.user.js
+// @downloadURL  https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/התאמת מחיר אוטומטי.user.js
 // ==/UserScript==
 
 (function() {
