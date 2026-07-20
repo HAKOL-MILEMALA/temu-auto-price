@@ -17,7 +17,7 @@
 כדי להשתמש בסקריפט, יש לוודא שמותקן אצלכם תוסף לניהול סקריפטים (כמו Tampermonkey) בדפדפן.
 
 1. [התקן את Tampermonkey](https://www.tampermonkey.net/) עבור הדפדפן שלך.
-2. [לחץ כאן כדי להתקין את הסקריפט]([-RAW_שלך](https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/התאמת מחיר אוטומטי.user.js)).
+2. [לחץ כאן כדי להתקין את הסקריפט]((https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/התאמת מחיר אוטומטי.user.js)).
 3. חלון של Tampermonkey ייפתח – לחץ על **Install** (התקן).
 
 ## 💡 איך משתמשים?
