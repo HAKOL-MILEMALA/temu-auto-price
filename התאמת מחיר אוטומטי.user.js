@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         התאמת מחיר אוטומטית בטמו (Temu)
 // @namespace    http://tampermonkey.net/
-// @version      3.4
+// @version      3.5
 // @description  אוטומציה מלאה לבדיקה ואיסוף החזרי הפרשי מחירים בטמו כולל ממשק שליטה חכם
 // @author       HAKOL-MILEMALA
 // @match        https://www.temu.com/bgt_order_detail.html*
 // @match        https://www.temu.com/bgas_refund_difference.html*
 // @match        https://www.temu.com/bgas_refund_detail.html*
-// @updateURL    https://github.com/HAKOL-MILEMALA/temu-auto-price/raw/refs/heads/main/%D7%94%D7%AA%D7%90%D7%9E%D7%AA%20%D7%9E%D7%97%D7%99%D7%A8%20%D7%90%D7%95%D7%98%D7%95%D7%9E%D7%98%D7%99.user.js
-// @downloadURL  https://github.com/HAKOL-MILEMALA/temu-auto-price/raw/refs/heads/main/%D7%94%D7%AA%D7%90%D7%9E%D7%AA%20%D7%9E%D7%97%D7%99%D7%A8%20%D7%90%D7%95%D7%98%D7%95%D7%9E%D7%98%D7%99.user.js
+// @updateURL    https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/%D7%94%D7%AA%D7%90%D7%9E%D7%AA%20%D7%9E%D7%97%D7%99%D7%A8%20%D7%90%D7%95%D7%98%D7%95%D7%9E%D7%98%D7%99.user.js
+// @downloadURL  https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/%D7%94%D7%AA%D7%90%D7%9E%D7%AA%20%D7%9E%D7%97%D7%99%D7%A8%20%D7%90%D7%95%D7%98%D7%95%D7%9E%D7%98%D7%99.user.js
 // @grant        window.close
 // @run-at       document-idle
 // ==/UserScript==
