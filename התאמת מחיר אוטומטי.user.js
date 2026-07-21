@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name         התאמת מחירים אוטומטית של טמו
+// @name         התאמת מחיר אוטומטית בטמו (Temu)
 // @namespace    http://tampermonkey.net/
-// @version      3.2
-// @description  אוטומציה להתאמת מחיר בטמו - עיצוב בולט יותר וזמן השהייה עם ספירה לאחור לפני סגירה
-// @author       You
+// @version      3.4
+// @description  אוטומציה מלאה לבדיקה ואיסוף החזרי הפרשי מחירים בטמו כולל ממשק שליטה חכם
+// @author       HAKOL-MILEMALA
 // @match        https://www.temu.com/bgt_order_detail.html*
 // @match        https://www.temu.com/bgas_refund_difference.html*
 // @match        https://www.temu.com/bgas_refund_detail.html*
+// @updateURL    https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-price-adjustment/main/temu-price-adjustment.user.js
+// @downloadURL  https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-price-adjustment/main/temu-price-adjustment.user.js
 // @grant        window.close
 // @run-at       document-idle
-// @updateURL    https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/התאמת מחיר אוטומטי.user.js
-// @downloadURL  https://raw.githubusercontent.com/HAKOL-MILEMALA/temu-auto-price/main/התאמת מחיר אוטומטי.user.js
 // ==/UserScript==
 
 (function() {
@@ -19,33 +19,76 @@
     // משתנה גלובלי לשליטה על הרצת הסקריפט
     let isAborted = false;
     let statusTextNode = null;
+    let container = null;
 
-    // יצירת בועת הסטטוס על המסך - במיקום מרכזי ובולט יותר
+    // יצירת בועת הסטטוס על המסך - עיצוב חדש ומודרני
     function createStatusBubble() {
-        const container = document.createElement('div');
-        // מיקום באמצע למעלה, עם הצללה חזקה וטקסט גדול יותר
-        container.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#fff; border:3px solid #fb7701; padding:20px; z-index:999999; border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.4); direction:rtl; font-family:sans-serif; text-align:center; min-width:320px;';
-
+        container = document.createElement('div');
+        container.style.cssText = `
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 20px 28px;
+            z-index: 999999;
+            border-radius: 16px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+            direction: rtl;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            min-width: 340px;
+            border-top: 4px solid #f97316;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        `;
+        
         statusTextNode = document.createElement('div');
         statusTextNode.innerText = 'טוען סקריפט...';
-        statusTextNode.style.cssText = 'margin-bottom:15px; font-weight:bold; color:#333; font-size:18px; line-height:1.4;';
-
+        statusTextNode.style.cssText = 'margin-bottom: 16px; font-weight: 600; color: #374151; font-size: 17px; line-height: 1.5;';
+        
         const stopBtn = document.createElement('button');
         stopBtn.innerText = 'עצור אוטומציה והישאר בעמוד';
-        stopBtn.style.cssText = 'background:#fb7701; color:#fff; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:16px; width:100%; transition: background 0.3s; box-shadow:0 2px 6px rgba(0,0,0,0.2);';
+        stopBtn.style.cssText = `
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+        `;
+        
+        // אפקטים של אנימציה במעבר עכבר
+        stopBtn.onmouseover = () => { 
+            stopBtn.style.background = '#ea580c'; 
+            stopBtn.style.transform = 'translateY(-1px)';
+            stopBtn.style.boxShadow = '0 4px 12px rgba(249, 115, 22, 0.4)';
+        };
+        stopBtn.onmouseout = () => { 
+            stopBtn.style.background = '#f97316'; 
+            stopBtn.style.transform = 'translateY(0)';
+            stopBtn.style.boxShadow = '0 2px 8px rgba(249, 115, 22, 0.3)';
+        };
 
-        // אפקט מעבר עכבר לכפתור
-        stopBtn.onmouseover = () => { stopBtn.style.background = '#e06a00'; };
-        stopBtn.onmouseout = () => { stopBtn.style.background = '#fb7701'; };
-
-        // פעולת הביטול בלחיצה
+        // פעולת הביטול בלחיצה + העלמת הבועה
         stopBtn.onclick = () => {
             isAborted = true;
             statusTextNode.innerText = 'הסקריפט נעצר לבקשתך.';
-            statusTextNode.style.color = 'red';
-            stopBtn.style.display = 'none'; // הסתרת הכפתור כדי להראות שהפעולה נקלטה
-        };
+            statusTextNode.style.color = '#ef4444'; 
+            stopBtn.style.display = 'none';
 
+            // מנגנון העלמה (Fade Out) לאחר 2 שניות
+            setTimeout(() => {
+                container.style.opacity = '0';
+                container.style.transform = 'translateX(-50%) translateY(-20px)';
+                setTimeout(() => container.remove(), 400); // ממתין לסיום האנימציה ומסיר מה-DOM
+            }, 2000);
+        };
+        
         container.appendChild(statusTextNode);
         container.appendChild(stopBtn);
         document.body.appendChild(container);
@@ -58,17 +101,17 @@
         }
     }
 
-    // פונקציה לסגירת העמוד עם ספירה לאחור של 3 שניות
+    // פונקציה לסגירת העמוד עם ספירה לאחור של 3 שניות (עבור התאמה/דחייה)
     function closePageWithCountdown(baseMessage) {
-        let timeLeft = 3; // 3 שניות המתנה
+        let timeLeft = 3;
         updateStatus(`${baseMessage}\nנסגר בעוד ${timeLeft} שניות...`);
-
+        
         const countdownInterval = setInterval(() => {
             if (isAborted) {
                 clearInterval(countdownInterval);
                 return;
             }
-
+            
             timeLeft--;
             if (timeLeft > 0) {
                 updateStatus(`${baseMessage}\nנסגר בעוד ${timeLeft} שניות...`);
@@ -91,7 +134,7 @@
                 return true;
             }
         }
-
+        
         const spans = document.querySelectorAll('span');
         for (let span of spans) {
             if (span.textContent && span.textContent.trim() === exactText) {
@@ -124,24 +167,45 @@
                 return;
             }
             if (checkForSorryPopup()) {
-                clearInterval(monitorInterval); // עוצר את הסריקה
+                clearInterval(monitorInterval);
                 closePageWithCountdown('לא נמצאה התאמת מחיר.');
             }
         }, 1000);
     }
 
-    // טיפול בעמוד פרטי ההזמנה הראשי
+    // טיפול בעמוד פרטי ההזמנה הראשי - עם ספירה לאחור של 5 שניות לפני לחיצה
     function handleOrderPage() {
-        updateStatus('עמוד הזמנה: ממתין לטעינת הכפתור...');
-        setTimeout(() => {
-            if (isAborted) return;
-            const found = findAndClickButton('התאמת מחיר');
-            if (found) {
-                updateStatus('נלחץ "התאמת מחיר". ממתין לתוצאה...');
-            } else {
-                updateStatus('כפתור "התאמת מחיר" לא זמין בעמוד זה.');
+        let waitTime = 5;
+        updateStatus(`עמוד הזמנה: מחפש התאמת מחיר בעוד ${waitTime} שניות...`);
+
+        const waitInterval = setInterval(() => {
+            if (isAborted) {
+                clearInterval(waitInterval);
+                return;
             }
-        }, 3000);
+            
+            waitTime--;
+            if (waitTime > 0) {
+                updateStatus(`עמוד הזמנה: מחפש התאמת מחיר בעוד ${waitTime} שניות...`);
+            } else {
+                // הזמן עבר, עוצרים את השעון ומנסים ללחוץ
+                clearInterval(waitInterval);
+                const found = findAndClickButton('התאמת מחיר');
+                if (found) {
+                    updateStatus('נלחץ "התאמת מחיר". ממתין לתוצאה...');
+                } else {
+                    updateStatus('כפתור "התאמת מחיר" לא זמין בעמוד זה.');
+                    
+                    // מעלים את הבועה אוטומטית אם לא רלוונטי
+                    setTimeout(() => {
+                        if (!isAborted) {
+                            container.style.opacity = '0';
+                            setTimeout(() => container.remove(), 400);
+                        }
+                    }, 3000);
+                }
+            }
+        }, 1000);
     }
 
     // טיפול בעמוד בקשת ההחזר
@@ -149,14 +213,14 @@
         updateStatus('עמוד בקשה: מתחיל תהליך אישור...');
         let currentStep = 1;
         let attempts = 0;
-        const maxAttempts = 40;
-
+        const maxAttempts = 40; 
+        
         const processInterval = setInterval(() => {
             if (isAborted) {
                 clearInterval(processInterval);
                 return;
             }
-
+            
             attempts++;
             if (attempts > maxAttempts) {
                 updateStatus('חריגת זמן בפעולה. הסקריפט נעצר.');
@@ -170,7 +234,7 @@
                     currentStep = 2;
                     attempts = 0;
                 }
-            }
+            } 
             else if (currentStep === 2) {
                 if (findAndClickButton('קבלה תוך שניות')) {
                     updateStatus('נבחר זיכוי מהיר. מאשר...');
@@ -199,7 +263,7 @@
 
         setTimeout(() => {
             const currentUrl = window.location.href;
-
+            
             if (currentUrl.includes('bgt_order_detail.html')) {
                 handleOrderPage();
             } else if (currentUrl.includes('bgas_refund_difference.html')) {
